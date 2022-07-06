@@ -105,6 +105,7 @@ DATABASES = {
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD':config('DB_PASSWORD'),
+        'HOST':config('DB_HOST')
     }
 }
 
@@ -145,6 +146,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+
 
 
 # Static files (CSS, JavaScript, Images)
