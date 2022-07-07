@@ -17,7 +17,8 @@ from .serializers import ProfileSerializer, UserSerializer,ProjectSerializer, Co
 from rest_framework import status
 import jwt,datetime
 from .forms import *
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create your views here.
 def home(request):
@@ -45,10 +46,10 @@ def register_user(request):
     return render(request, 'auth/register.html', context)
 class LoginView(APIView):
     def post(self, request):
-        email = request.data['email']
+        name = request.data['name']
         password = request.data['password']
 
-        user=User.objects.filter(email=email).first()
+        user=User.objects.filter(name=name).first()
 
         if user is None:
             raise AuthenticationFailed('user not found')
@@ -63,7 +64,7 @@ class LoginView(APIView):
             'iat': datetime.datetime.now()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)

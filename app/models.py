@@ -26,7 +26,7 @@ class User(AbstractUser):
     username= models.CharField(max_length=255,unique=True)
     cohort=models.OneToOneField(Cohort,on_delete=models.SET_NULL,null=True)
     # project=models.ForeignKey(Project,on_delete=CASCADE)
-    USERNAME_FIELD='email'
+    # USERNAME_FIELD='email'
     # REQUIRED_FIELDS=[]
 
 
