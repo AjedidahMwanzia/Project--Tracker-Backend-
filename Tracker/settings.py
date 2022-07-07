@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from dotenv import load_dotenv,find_dotenv
 from pathlib import Path
 import django_heroku
 import cloudinary
@@ -19,6 +20,7 @@ from datetime import timedelta
 import dj_database_url
 from decouple import config,Csv
 
+load_dotenv(find_dotenv())
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = 'django-insecure-(8v3i0^&t8(huyjkj&@*f+(%01*d98f#ccpa7tqhtlq=ay-p)t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -102,13 +104,13 @@ WSGI_APPLICATION = 'Tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD':config('DB_PASSWORD'),
-        'HOST':config('DB_HOST')
+        'NAME': 'backend',
+        # 'USER': config('DB_USER'),
+        # 'PASSWORD':config('DB_PASSWORD'),
+        # 'HOST':config('DB_HOST')
     }
 }
-
+print(os.getenv('SECRET_KEY'))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
