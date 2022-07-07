@@ -8,8 +8,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     
     path('',views.home,name='home'),
-    path(api/register/',views.RegisterView.as_view(),name = 'register'),
-    path('api/login/',views.LoginView.as_view(),name = 'login'),
+    path('api/register/',views.RegisterView.as_view()),
+    path('api/login/',views.LoginView.as_view()),
     # path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('api/user', views.UserView.as_view(), name='user'),
     path( 'logout', views.LogoutView.as_view(), name='logout'),
