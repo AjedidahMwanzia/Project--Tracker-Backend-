@@ -1,7 +1,7 @@
 
 from django.shortcuts import redirect, render
 from django.contrib import messages
-
+from rest_framework.decorators import api_view
 from app.forms import UserRegistrationForm
 from .models import *
 import cloudinary
@@ -24,6 +24,11 @@ User = get_user_model()
 def home(request):
     return render(request,'index.html')
 
+@api_view(['GET'])
+def users(request):
+    users=User.objects.all()
+    serialized=UserSerializer(users,many=True)
+    return Response(serialized.data)
 
 class ProjectList(APIView):
     def get(self,request,format = None):
@@ -31,19 +36,23 @@ class ProjectList(APIView):
         serializerdata = ProjectSerializer(all_projects,many = True)
         return Response(serializerdata.data)
 
+
+@api_view(['POST'])
 def register_user(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-
-            messages.success(request, f'Your account has been created. You can log in now!')    
-            return redirect('login')
+    print('text')
+    user=User.objects.filter(username=request.data["username"])
+    if user:
+        print('user exists')
+        return Response("This user already exist")
+        
     else:
-        form = UserRegistrationForm()
+        serialized_user=UserSerializer(data=request.data)
+        serialized_user.is_valid(raise_exception=True)
+        serialized_user.save()
+        print('user save')
+        return Response({"message":"Successfully registered"})
 
-    context = {'form': form}
-    return render(request, 'auth/register.html', context)
+    
 class LoginView(APIView):
     def post(self, request):
         name = request.data['name']

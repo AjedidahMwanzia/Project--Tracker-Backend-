@@ -8,18 +8,16 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     
     path('',views.home,name='home'),
-    path('api/register/',views.RegisterView.as_view()),
+    path('api/register/',views.register_user),
     path('api/login/',views.LoginView.as_view()),
-    # path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
-    path('api/user', views.UserView.as_view()),
-    path( 'api/logout', views.LogoutView.as_view()),
-    # path('logout/', auth_views.LogoutView.as_view(template_name='auth/login.html'), name='logout'),
+    path('api/users/', views.users),
+    path('api/user/', views.UserView.as_view()),
+    path( 'api/logout/', views.LogoutView.as_view()),
     path('api/profile/', views.ProfileList.as_view()),
     path('api/users/', views.UserList.as_view()),
     path('api-token-auth/', obtain_auth_token),
-    path('api/projects',views.ProjectList.as_view()),
+    path('api/projects/',views.ProjectList.as_view()),
     path('api/cohort/', views.CohortList.as_view()),
-    # path('auth/login/', obtain_auth_token),
-    # path('auth/refresh-token/', refresh_auth_token),
+  
 
 ]
