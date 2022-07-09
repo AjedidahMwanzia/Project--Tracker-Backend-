@@ -34,7 +34,8 @@ class User(AbstractUser):
 
 class Project(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    name = models.CharField(max_length=30)
+    owner=models.CharField(max_length=255,null=True)
+    name = models.CharField(max_length=255)
     description = models.TextField(max_length=500)
     project_image = CloudinaryField('image')
     url = models.URLField(blank=True)
@@ -93,4 +94,20 @@ class Profile(models.Model):
     def search_profile(cls, name):
         return cls.objects.filter(user__username__icontains=name).all()
 
+
+class Member(models.Model):
+    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
+    first_name = models.CharField(max_length=255,null=True)
+    last_name = models.CharField(max_length=255,null=True)
+    image = CloudinaryField('image', null=True)
+    url = models.URLField(blank=True,null=True)
+
+    def __str__(self):
+        return str(self.first_name)
+
+    def save_member(self):
+        self.user
+
+    def delete_member(self):
+        self.delete()    
 

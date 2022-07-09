@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from app.permissions import IsAdminOrReadOnly
 from .models import  Profile,Project,Cohort, User
-from .serializers import ProfileSerializer, UserSerializer,ProjectSerializer, CohortSerializer
+from .serializers import ProfileSerializer, UserSerializer,ProjectSerializer, CohortSerializer,MemberSerializer
 from rest_framework import status
 import jwt,datetime
 from .forms import *
@@ -36,20 +36,24 @@ class ProjectList(APIView):
         serializerdata = ProjectSerializer(all_projects,many = True)
         return Response(serializerdata.data)
 
+class MemberList(APIView):
+    def get(self,request,format = None):
+        all_members = Member.objects.all()
+        serializerdata = MemberSerializer(all_members,many = True)
+        return Response(serializerdata.data)
+
 
 @api_view(['POST'])
 def register_user(request):
-    print('text')
+   
     user=User.objects.filter(username=request.data["username"])
     if user:
-        print('user exists')
         return Response("This user already exist")
         
     else:
         serialized_user=UserSerializer(data=request.data)
         serialized_user.is_valid(raise_exception=True)
         serialized_user.save()
-        print('user save')
         return Response({"message":"Successfully registered"})
 
     
@@ -160,6 +164,20 @@ class CohortList(APIView):
     
     def post(self,request,format=None):
         serializers = CohortSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MemberList(APIView):
+    def get(self, request, format=None):
+        all_members = Member.objects.all()
+        serializers = MemberSerializer(all_members, many=True)
+        permission_classes = (IsAdminOrReadOnly,)
+        return Response(serializers.data)
+    
+    def post(self,request,format=None):
+        serializers = MemberSerializer(data=request.data)
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_201_CREATED)

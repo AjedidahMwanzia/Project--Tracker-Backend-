@@ -1,14 +1,14 @@
 from wsgiref import validate
 from rest_framework import serializers
-from .models import Profile,Project, Cohort, User
+from .models import Profile,Project, Cohort, User,Member
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        # fields= ('name', 'email', 'password')
-        fields='__all__'
+        fields= ('name','username', 'email', 'password')
+       
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -46,3 +46,10 @@ class CohortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cohort 
         fields = ('name', 'admission_date', 'graduation_date')
+
+class MemberSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Member
+        fields=('__all__') 
+
