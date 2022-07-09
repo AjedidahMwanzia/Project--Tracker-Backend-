@@ -36,13 +36,6 @@ class ProjectList(APIView):
         serializerdata = ProjectSerializer(all_projects,many = True)
         return Response(serializerdata.data)
 
-class MemberList(APIView):
-    def get(self,request,format = None):
-        all_members = Member.objects.all()
-        serializerdata = MemberSerializer(all_members,many = True)
-        return Response(serializerdata.data)
-
-
 @api_view(['POST'])
 def register_user(request):
    
