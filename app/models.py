@@ -9,9 +9,10 @@ from cloudinary.models import CloudinaryField
 
 
 class Cohort(models.Model):
+
     name = models.CharField(max_length=100)
-    admission_date = models.DateTimeField(auto_now_add=True,blank=True)
-    graduation_date = models.DateTimeField(auto_now_add=True,blank=True)
+    admission_date = models.DateTimeField(blank=True)
+    graduation_date = models.DateTimeField(blank=True)
 
     def __str__(self):
         return str(self.name)
@@ -24,21 +25,45 @@ class User(AbstractUser):
     password = models.CharField(max_length=255)
     email = models.CharField(max_length=255,unique=True)
     username= models.CharField(max_length=255,unique=True)
-    cohort=models.OneToOneField(Cohort,on_delete=models.SET_NULL,null=True)
+    cohort=models.ForeignKey(Cohort,on_delete=models.SET_NULL,null=True)
+    MY_CHOICES = (
+        ('a', 'Android'),
+        ('b', 'Fullstack'),
+       
+    )
+    stack = models.CharField(max_length=1, choices=MY_CHOICES)
     # project=models.ForeignKey(Project,on_delete=CASCADE)
     # USERNAME_FIELD='email'
     # REQUIRED_FIELDS=[]
 
 
+class Member(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    @receiver(post_save, sender=User)
+    def create_user_member(sender, instance, created, **kwargs):
+        if created:
+            Member.objects.create(user=instance)
+
+    def __str__(self):
+        return str(self.user.username)
+
+    def save_member(self):
+        self.user
+
+    def delete_member(self):
+        self.delete()    
+
 
 
 class Project(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    owner=models.CharField(max_length=255,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=500)
     project_image = CloudinaryField('image')
     url = models.URLField(blank=True)
+    member = models.ManyToManyField(Member)
+    
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -94,20 +119,4 @@ class Profile(models.Model):
     def search_profile(cls, name):
         return cls.objects.filter(user__username__icontains=name).all()
 
-
-class Member(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    first_name = models.CharField(max_length=255,null=True)
-    last_name = models.CharField(max_length=255,null=True)
-    image = CloudinaryField('image', null=True)
-    url = models.URLField(blank=True,null=True)
-
-    def __str__(self):
-        return str(self.first_name)
-
-    def save_member(self):
-        self.user
-
-    def delete_member(self):
-        self.delete()    
 
