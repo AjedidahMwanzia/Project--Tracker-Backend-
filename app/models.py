@@ -9,6 +9,7 @@ from cloudinary.models import CloudinaryField
 
 
 class Cohort(models.Model):
+
     name = models.CharField(max_length=100)
     admission_date = models.DateTimeField(auto_now_add=True,blank=True)
     graduation_date = models.DateTimeField(auto_now_add=True,blank=True)
@@ -24,7 +25,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=255)
     email = models.CharField(max_length=255,unique=True)
     username= models.CharField(max_length=255,unique=True)
-    cohort=models.OneToOneField(Cohort,on_delete=models.SET_NULL,null=True)
+    cohort=models.ForeignKey(Cohort,on_delete=models.SET_NULL,null=True)
     # project=models.ForeignKey(Project,on_delete=CASCADE)
     # USERNAME_FIELD='email'
     # REQUIRED_FIELDS=[]
@@ -33,7 +34,7 @@ class User(AbstractUser):
 
 
 class Project(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
+    user=models.ManyToManyField(User,blank=True)
     owner=models.CharField(max_length=255,null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=500)
@@ -96,7 +97,7 @@ class Profile(models.Model):
 
 
 class Member(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255,null=True)
     last_name = models.CharField(max_length=255,null=True)
     image = CloudinaryField('image', null=True)

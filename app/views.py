@@ -52,10 +52,10 @@ def register_user(request):
     
 class LoginView(APIView):
     def post(self, request):
-        name = request.data['name']
+        email = request.data['email']
         password = request.data['password']
 
-        user=User.objects.filter(name=name).first()
+        user=User.objects.filter(email=email).first()
 
         if user is None:
             raise AuthenticationFailed('user not found')
