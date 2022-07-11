@@ -26,21 +26,36 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+      return obj.user.username
+
     class Meta:
         model=Profile
         fields=('__all__')
 
-        read_only_fields = ("user",)
-        depth = 1
+        # read_only_fields = ("user",)
+        # depth = 1
 
 
 
         
 class ProjectSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+      return obj.user.username
+
+    member = serializers.SerializerMethodField()
+
+    def get_member(self, obj):
+      return obj.user.username
 
     class Meta:
         model = Project
-        fields = ('name', 'description', 'project_image','url','user') 
+        fields=('__all__') 
+    
 
 class CohortSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,7 +63,10 @@ class CohortSerializer(serializers.ModelSerializer):
         fields = ('name', 'admission_date', 'graduation_date')
 
 class MemberSerializer(serializers.ModelSerializer):
+    member = serializers.SerializerMethodField()
 
+    def get_member(self, obj):
+      return obj.user.username
     class Meta:
         model = Member
         fields=('__all__') 

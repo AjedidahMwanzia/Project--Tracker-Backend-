@@ -8,7 +8,6 @@ requests = "*"
 django = "*"
 python-decouple = "*"
 cloudinary = "*"
-psycopg2 = "*"
 django-cors-headers = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
@@ -18,6 +17,7 @@ django-heroku = "*"
 whitenoise = "*"
 dj-database-url = "*"
 python-dotenv = "*"
+wheel = "*"
 
 [dev-packages]
 

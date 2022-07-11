@@ -104,10 +104,10 @@ WSGI_APPLICATION = 'Tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'backend',
-        # 'USER': config('DB_USER'),
-        # 'PASSWORD':config('DB_PASSWORD'),
-        # 'HOST':config('DB_HOST')
+        'NAME': 'backend1',
+        'USER': config('DB_USER'),
+        'PASSWORD':config('DB_PASSWORD'),
+        
     }
 }
 print(os.getenv('SECRET_KEY'))
