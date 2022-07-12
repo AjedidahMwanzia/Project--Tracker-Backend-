@@ -20,6 +20,8 @@ import jwt,datetime
 from .forms import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from requests.structures import CaseInsensitiveDict
+
 
 # Create your views here.
 def home(request):
@@ -79,7 +81,7 @@ class LoginView(APIView):
             'iat': datetime.datetime.now()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        token = jwt.encode(payload, 'this87295is9874my8574secret', algorithm='HS256')
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -91,9 +93,15 @@ class LoginView(APIView):
         return response
 @api_view(['GET'])
 def authenticated_user(request):
-    token = request.COOKIES.get('jwt')
+    # auth = request.headers.get("Authorization")
+    # headers["Accept"] = "application/json"
+    # headers["Authorization"] = "Bearer {token}"
+    # authorizatoion= headers["Authorization"]
+    token = request.headers.get("Authorization").replace('Bearer ','')
+    
     if not token:
         return Response({'message': 'No authenticated user found!'})
+       
     try:
         payload = jwt.decode(token, 'this87295is9874my8574secret', algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
@@ -152,7 +160,7 @@ class ProfileList(APIView):
         all_profile = Profile.objects.all()
         serializers = ProfileSerializer(all_profile, many=True)
         return Response(serializers.data)
-    def post(self, request, format=None):
+    def patch(self, request, format=None):
         serializers = ProfileSerializer(data=request.data)
         if serializers.is_valid():
             serializers.save()
