@@ -104,9 +104,9 @@ WSGI_APPLICATION = 'Tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'backend1',
-        'USER': config('DB_USER'),
-        'PASSWORD':config('DB_PASSWORD'),
+        'NAME': 'backend',
+        # 'USER': config('DB_USER'),
+        # 'PASSWORD':config('DB_PASSWORD'),
         
     }
 }
@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
