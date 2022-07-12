@@ -21,6 +21,8 @@ class Cohort(models.Model):
         self.save()
 
 class User(AbstractUser):
+    # is_admin=models.BooleanField('Is_admin',default=False)
+    # is_student=models.BooleanField('Is_student',default=False)
     name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     email = models.CharField(max_length=255,unique=True)
@@ -39,7 +41,7 @@ class User(AbstractUser):
 
 class Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    project= models.ManyToManyField('Project')
     @receiver(post_save, sender=User)
     def create_user_member(sender, instance, created, **kwargs):
         if created:
@@ -62,8 +64,6 @@ class Project(models.Model):
     description = models.TextField(max_length=500)
     project_image = CloudinaryField('image')
     url = models.URLField(blank=True)
-    member = models.ManyToManyField(Member)
-    
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

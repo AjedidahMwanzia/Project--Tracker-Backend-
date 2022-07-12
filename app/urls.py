@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/projects/',views.ProjectList.as_view()),
     path('api/member/',views.MemberList.as_view()),
     path('api/cohort/', views.CohortList.as_view()),
+    path('api/authenticated_user/',views.authenticated_user),
   
 
 ]
