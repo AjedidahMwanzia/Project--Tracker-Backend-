@@ -1,4 +1,8 @@
+
+from django.http import Http404
+
 import re
+
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from rest_framework.decorators import api_view
@@ -207,3 +211,22 @@ class MemberList(APIView):
             serializers.save()
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class UserDescription(APIView):
+    # permission_classes = (IsAdminOrReadOnly,)
+    
+    def get_user(self,request, pk):
+        current_user = request.user
+        user = User.objects.get(id = current_user.id)
+        # profile=Profile.filter_profile_by_id(user.id)
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_user(pk)
+        serializers = UserSerializer(user)
+        return Response(serializers.data)
