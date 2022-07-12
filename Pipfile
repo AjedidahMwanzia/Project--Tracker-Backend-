@@ -18,6 +18,8 @@ whitenoise = "*"
 dj-database-url = "*"
 python-dotenv = "*"
 wheel = "*"
+six = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

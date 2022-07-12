@@ -7,7 +7,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields= ('name','username', 'email', 'password')
+        fields= ("__all__")
        
         extra_kwargs = {
             'password': {'write_only': True}
@@ -60,7 +60,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class CohortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cohort 
-        fields = ('name', 'admission_date', 'graduation_date')
+        fields = ("__all__")
 
 class MemberSerializer(serializers.ModelSerializer):
     member = serializers.SerializerMethodField()
