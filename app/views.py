@@ -1,10 +1,14 @@
 
 from django.http import Http404
+
+import re
+
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from rest_framework.decorators import api_view
 from app.forms import UserRegistrationForm
 from .models import *
+from django.http import JsonResponse
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -20,6 +24,8 @@ import jwt,datetime
 from .forms import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from requests.structures import CaseInsensitiveDict
+
 
 # Create your views here.
 def home(request):
@@ -31,32 +37,40 @@ def users(request):
     serialized=UserSerializer(users,many=True)
     return Response(serialized.data)
 
+
 class ProjectList(APIView):
     def get(self,request,format = None):
         all_projects = Project.objects.all()
         serializerdata = ProjectSerializer(all_projects,many = True)
+        # print(serializerdata.data.members)
         return Response(serializerdata.data)
 
 @api_view(['POST'])
 def register_user(request):
-   
-    user=User.objects.filter(username=request.data["username"])
-    if user:
-        return Response("This user already exist")
-        
+    
+    regex = "@([a-z\S]+)"
+    result = re.split(regex,request.data['email'])
+    if result[1] == "student.moringaschool.com" or result[1] == "moringaschool.com":
+        user = User.objects.filter(username=request.data['username']).first()
+        if user:
+            return Response({'message': 'You have already registered! Please login'})
+        else:
+            serialized_user = UserSerializer(data=request.data)
+            serialized_user.is_valid(raise_exception=True)
+            serialized_user.save()
+            serialized_user.data.update({'message': 'Success! Please log in'})
+            return Response(serialized_user.data)
     else:
-        serialized_user=UserSerializer(data=request.data)
-        serialized_user.is_valid(raise_exception=True)
-        serialized_user.save()
-        return Response({"message":"Successfully registered"})
+        return Response({'message': 'Please register using the school email'})
+
 
     
 class LoginView(APIView):
     def post(self, request):
-        email = request.data['email']
+        username = request.data['username']
         password = request.data['password']
 
-        user=User.objects.filter(email=email).first()
+        user=User.objects.filter(username=username).first()
 
         if user is None:
             raise AuthenticationFailed('user not found')
@@ -71,7 +85,7 @@ class LoginView(APIView):
             'iat': datetime.datetime.now()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        token = jwt.encode(payload, 'this87295is9874my8574secret', algorithm='HS256')
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -81,6 +95,27 @@ class LoginView(APIView):
         }
 
         return response
+@api_view(['GET'])
+def authenticated_user(request):
+    # auth = request.headers.get("Authorization")
+    # headers["Accept"] = "application/json"
+    # headers["Authorization"] = "Bearer {token}"
+    # authorizatoion= headers["Authorization"]
+    token = request.headers.get("Authorization").replace('Bearer ','')
+    
+    if not token:
+        return Response({'message': 'No authenticated user found!'})
+       
+    try:
+        payload = jwt.decode(token, 'this87295is9874my8574secret', algorithms=['HS256'])
+    except jwt.ExpiredSignatureError:
+        return Response({'message': 'Authentication token expired'})
+
+    user = User.objects.filter(id=payload['id']).first()
+    serialized_user = UserSerializer(user)
+    serialized_user.data.update({'message': 'User found'})
+    return Response(serialized_user.data)
+
 
 class UserView(APIView):
     def get(self, request):
@@ -129,7 +164,7 @@ class ProfileList(APIView):
         all_profile = Profile.objects.all()
         serializers = ProfileSerializer(all_profile, many=True)
         return Response(serializers.data)
-    def post(self, request, format=None):
+    def patch(self, request, format=None):
         serializers = ProfileSerializer(data=request.data)
         if serializers.is_valid():
             serializers.save()

@@ -21,6 +21,9 @@ urlpatterns = [
     path('api/cohort/', views.CohortList.as_view()),
     path('api/user/user-id/<int:id>',
         views.UserDescription.as_view())
+
+    path('api/authenticated_user/',views.authenticated_user),
+
   
 
 ]

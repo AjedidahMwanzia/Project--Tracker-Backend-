@@ -5,6 +5,10 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+    # project = serializers.SerializerMethodField()
+
+    # def get_project(self, obj):
+    #   return obj.project.name
     class Meta:
         model=User
         fields= ("__all__")
@@ -39,19 +43,32 @@ class ProfileSerializer(serializers.ModelSerializer):
         # depth = 1
 
 
-
-        
-class ProjectSerializer(serializers.ModelSerializer):
+class MemberSerializer(serializers.ModelSerializer):
+    
     user = serializers.SerializerMethodField()
 
     def get_user(self, obj):
       return obj.user.username
 
-    member = serializers.SerializerMethodField()
+    project = "ProjectSerializer(source='project_set', many=True)"
 
-    def get_member(self, obj):
+    class Meta:
+        model = Member
+        fields=('__all__') 
+
+
+        
+class ProjectSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    member = MemberSerializer(source='member_set', many=True)
+    def get_user(self, obj):
       return obj.user.username
 
+    # member = serializers.SerializerMethodField()
+
+    # def get_member(self, obj):
+    #   return obj.member_set.all().username
+      
     class Meta:
         model = Project
         fields=('__all__') 
@@ -61,13 +78,4 @@ class CohortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cohort 
         fields = ("__all__")
-
-class MemberSerializer(serializers.ModelSerializer):
-    member = serializers.SerializerMethodField()
-
-    def get_member(self, obj):
-      return obj.user.username
-    class Meta:
-        model = Member
-        fields=('__all__') 
 
